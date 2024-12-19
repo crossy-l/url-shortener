@@ -1,9 +1,7 @@
 from functools import wraps
-from flask_restful import Resource, marshal_with, abort
-from dal import UserDAL
-from database import UserModel
+from flask_restful import abort
 from flask import request
-from passwords import PasswordManager
+from app.utils.passwords import PasswordManager
 
 def requires_auth():
     def decorator(func):
@@ -22,21 +20,4 @@ def requires_auth():
         return wrapper
     return decorator
 
-class Users(Resource):
-    def __init__(self, user_dal: UserDAL):
-        self.user_dal = user_dal
 
-    @requires_auth()
-    @marshal_with(UserModel.fields())
-    def get(self):
-        users = self.user_dal.get_all_users()
-        return users
-    
-    @requires_auth()
-    @marshal_with(UserModel.fields())
-    def post(self):
-        try:
-            users = self.user_dal.post_user()
-            return users
-        except ValueError as e:
-            abort(400, message=f"{e}")

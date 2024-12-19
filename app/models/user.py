@@ -1,13 +1,7 @@
 import uuid
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 from flask_restful import fields, reqparse
-from args import ApiArguments
-
-Base = declarative_base()
+from app.database.database import Base
 
 class UserModel(Base):
     __tablename__ = "users"
@@ -17,8 +11,8 @@ class UserModel(Base):
     __user_fields = {
         'id': fields.String,
         'name': fields.String,
-        'password': fields.String,
-        'salt': fields.String
+        #'password': fields.String, Should not be served
+        #'salt': fields.String
     }
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -36,20 +30,3 @@ class UserModel(Base):
 
     def __repr__(self): 
         return f"User(name={self.name}, password={self.password})"
-    
-class ApiDatabase:
-    def __init__(self, app: Flask, args: ApiArguments):
-        self.app = app
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = args.sqlite_db_path
-        self.db = SQLAlchemy(self.app)
-
-        with self.app.app_context():
-            self.engine = self.db.engine
-            self.Session = sessionmaker(bind=self.engine)
-            self.session = self.Session()
-
-    def create_tables(self):
-        Base.metadata.create_all(self.engine)
-
-    def drop_tables(self):
-        Base.metadata.drop_all(self.engine)
