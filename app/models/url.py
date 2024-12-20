@@ -40,4 +40,4 @@ class UrlModel(Base):
         return cls.__url_fields
 
     def __repr__(self): 
-        return f"Url(alias={self.alias}, target={self.target})"
+        return f"Url(alias={self.alias}, target={self.target}, enforce-validity={self.enforce_validity})"

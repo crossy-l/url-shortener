@@ -17,9 +17,9 @@ class Users(Resource):
     @handle_error()
     @requires_auth()
     @marshal_with(UserModel.fields())
-    def post(self) -> list[UserModel]:
-        users = self.user_dal.post_user()
-        return users, 201
+    def post(self) -> UserModel:
+        user = self.user_dal.post_user()
+        return user, 201
 
 
 class User(Resource):

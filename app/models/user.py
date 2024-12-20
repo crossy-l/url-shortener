@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, String
 from flask_restful import fields, reqparse
 from app.database.database import Base
 
@@ -21,7 +21,6 @@ class UserModel(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(80), unique=True, nullable=False)
     password = Column(String(60), nullable=False)
-    salt = Column(String(60), nullable=False)
 
     @classmethod
     def parse_args(cls) -> reqparse.Namespace:
@@ -36,4 +35,4 @@ class UserModel(Base):
         return cls.__user_fields
 
     def __repr__(self): 
-        return f"User(name={self.name}, password={self.password})"
+        return f"User(name={self.name}, password={self.password}, salt={self.salt})"

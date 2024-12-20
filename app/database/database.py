@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
 from app.utils.args import ApiArguments
 
 Base = declarative_base()
@@ -9,7 +8,8 @@ Base = declarative_base()
 class ApiDatabase:
     def __init__(self, app: Flask, args: ApiArguments):
         self.app = app
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = args.sqlite_db_path
+        if args is not None:
+            self.app.config['SQLALCHEMY_DATABASE_URI'] = args.sqlite_db_path
         self.db = SQLAlchemy(self.app)
 
         with self.app.app_context():

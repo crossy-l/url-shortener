@@ -39,48 +39,49 @@ class ApiArguments:
                    sqlite_path=f"sqlite:///{args.sql_db_path}",
                    request_limits=(args.requests_per_day, args.requests_per_hour, args.requests_per_minute)
                 )
+arguments = None
+if "pytest" not in sys.argv[0]:
+    _parser = argparse.ArgumentParser("api.py")
+    _parser.add_argument(
+        "--recreate-db",
+        action="store_true",
+        help="If set, the database will be recreated."
+    )
+    _parser.add_argument(
+        "--cache-dir",
+        type=str,
+        default="cache",
+        help="Path to the cache directory for Flask. Defaults to 'cache'. Will be created if it does not exist."
+    )
+    _parser.add_argument(
+        "--sql-db-path",
+        type=str,
+        default="database.db",
+        help="Path to the sqlite database. Defaults to 'database.db'"
+    )
+    _parser.add_argument(
+        "--requests-per-day",
+        type=int,
+        default=28800,
+        help="The amount of requests per unique connection per day. Defaults to 28800 requests"
+    )
+    _parser.add_argument(
+        "--requests-per-hour",
+        type=int,
+        default=1200,
+        help="The amount of requests per unique connection per hour. Defaults to 1200 requests"
+    )
+    _parser.add_argument(
+        "--requests-per-minute",
+        type=int,
+        default=20,
+        help="The amount of requests per unique connection per minute. Defaults to 20 requests"
+    )
+    _parser.add_argument(
+        "--cache-timeout",
+        type=int,
+        default=24 * 60 * 60,
+        help="The time it takes for cache elements to get removed. Default is 24 hours."
+    )
 
-_parser = argparse.ArgumentParser("api.py")
-_parser.add_argument(
-    "--recreate-db",
-    action="store_true",
-    help="If set, the database will be recreated."
-)
-_parser.add_argument(
-    "--cache-dir",
-    type=str,
-    default="cache",
-    help="Path to the cache directory for Flask. Defaults to 'cache'. Will be created if it does not exist."
-)
-_parser.add_argument(
-    "--sql-db-path",
-    type=str,
-    default="database.db",
-    help="Path to the sqlite database. Defaults to 'database.db'"
-)
-_parser.add_argument(
-    "--requests-per-day",
-    type=int,
-    default=28800,
-    help="The amount of requests per unique connection per day. Defaults to 28800 requests"
-)
-_parser.add_argument(
-    "--requests-per-hour",
-    type=int,
-    default=1200,
-    help="The amount of requests per unique connection per hour. Defaults to 1200 requests"
-)
-_parser.add_argument(
-    "--requests-per-minute",
-    type=int,
-    default=20,
-    help="The amount of requests per unique connection per minute. Defaults to 20 requests"
-)
-_parser.add_argument(
-    "--cache-timeout",
-    type=int,
-    default=24 * 60 * 60,
-    help="The time it takes for cache elements to get removed. Default is 24 hours."
-)
-
-arguments = ApiArguments.from_cli_args(_parser.parse_args())
+    arguments = ApiArguments.from_cli_args(_parser.parse_args())

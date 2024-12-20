@@ -11,7 +11,7 @@ class UserDAL:
     def get_all_users(self) -> List[UserModel]:
         raise NotImplementedError()
     
-    def post_user(self) -> List[UserModel]:
+    def post_user(self) -> UserModel:
         raise NotImplementedError()
     
     def patch_user(self, id: str) -> UserModel:

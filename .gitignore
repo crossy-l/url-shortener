@@ -3,3 +3,4 @@ cache/
 scripts/
 instance/
 .venv/
+.coverage

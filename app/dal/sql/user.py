@@ -20,10 +20,10 @@ class SQLiteUserDAL(UserDAL):
     def get_all_users(self) -> List[UserModel]:
         return self.session.query(UserModel).all()
     
-    def post_user(self) -> List[UserModel]:
+    def post_user(self) -> UserModel:
         args = UserModel.parse_args()
-        self.write_user(name=args["name"], password=args["password"])
-        return self.get_all_users()
+        user = self.write_user(name=args["name"], password=args["password"])
+        return user
     
     def patch_user(self, id: str) -> UserModel:
         args = UserModel.parse_optional_args()
