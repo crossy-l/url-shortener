@@ -17,11 +17,11 @@ class UserDAL:
     def patch_user(self, id: str) -> UserModel:
         raise NotImplementedError()
     
-    
-    def fetch_user_by_name(self, name) -> UserModel:
+    def delete_user(self, id: str) -> str:
         raise NotImplementedError()
     
-    def write_user(self):
+    
+    def fetch_user_by_name(self, name) -> UserModel:
         raise NotImplementedError()
     
     def validate_auth(self, name: str, password: str) -> bool:

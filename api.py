@@ -1,15 +1,24 @@
 from flask import Flask
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_restful import Api
-from app.utils.args import arguments
+from app.utils.args import ApiArguments, arguments
 from app.database.database import ApiDatabase
-from app.factory import create_users_resource, create_user_resource, create_users
+from app.factory import create_users_resource, create_user_resource, create_users, create_url_resource, create_urls_resource, create_home_resource
 
 class ApiApp:
-    def __init__(self, name: str, args):
+    def __init__(self, name: str, args: ApiArguments):
         self.app = Flask(name)
         self.app.config["CACHE_TYPE"] = "FileSystemCache"
         self.app.config["CACHE_DIR"] = args.cache_dir
         self.app.config["CACHE_DEFAULT_TIMEOUT"] = args.cache_timeout
+
+        self.limiter = Limiter(
+            get_remote_address,
+            app=self.app,
+            default_limits=args.limits,
+            storage_uri="memory://"
+        )
         
         self.db = ApiDatabase(self.app, args)
         if args.recreate_db:
@@ -21,6 +30,9 @@ class ApiApp:
         self.api = Api(self.app)
         self.api.add_resource(create_users_resource(self.db), '/users/')
         self.api.add_resource(create_user_resource(self.db), '/user/<string:id>')
+        self.api.add_resource(create_urls_resource(self.db), '/urls/')
+        self.api.add_resource(create_url_resource(self.db), '/url/<string:id>')
+        self.api.add_resource(create_home_resource(self.db), '/<string:alias>')
 
     def run(self):
         self.app.run()

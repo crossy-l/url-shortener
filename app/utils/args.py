@@ -3,11 +3,17 @@ import os
 import sys
 
 class ApiArguments:
-    def __init__(self, cache_dir: str, cache_timeout: int, recreate_db: bool, sqlite_path: str):
+    def __init__(self, cache_dir: str, cache_timeout: int, recreate_db: bool, sqlite_path: str, request_limits: tuple[int, int, int]):
         self.recreate_db = recreate_db
         self.cache_dir = cache_dir
         self.cache_timeout = cache_timeout
         self.sqlite_db_path = sqlite_path
+        self.request_limits = request_limits
+
+    @property
+    def limits(self) -> list[str]:
+        day, hour, minute = self.request_limits
+        return [f"{day} per day", f"{hour} per hour", f"{minute} per minute"]
 
     @classmethod
     def from_cli_args(cls, args: argparse.Namespace):
@@ -30,7 +36,8 @@ class ApiArguments:
         return cls(cache_dir=cache_dir,
                    cache_timeout=args.cache_timeout,
                    recreate_db=recreate_db,
-                   sqlite_path=f"sqlite:///{args.sql_db_path}"
+                   sqlite_path=f"sqlite:///{args.sql_db_path}",
+                   request_limits=(args.requests_per_day, args.requests_per_hour, args.requests_per_minute)
                 )
 
 _parser = argparse.ArgumentParser("api.py")
@@ -50,6 +57,24 @@ _parser.add_argument(
     type=str,
     default="database.db",
     help="Path to the sqlite database. Defaults to 'database.db'"
+)
+_parser.add_argument(
+    "--requests-per-day",
+    type=int,
+    default=28800,
+    help="The amount of requests per unique connection per day. Defaults to 28800 requests"
+)
+_parser.add_argument(
+    "--requests-per-hour",
+    type=int,
+    default=1200,
+    help="The amount of requests per unique connection per hour. Defaults to 1200 requests"
+)
+_parser.add_argument(
+    "--requests-per-minute",
+    type=int,
+    default=20,
+    help="The amount of requests per unique connection per minute. Defaults to 20 requests"
 )
 _parser.add_argument(
     "--cache-timeout",
