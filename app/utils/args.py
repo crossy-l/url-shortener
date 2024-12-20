@@ -39,8 +39,18 @@ class ApiArguments:
                    sqlite_path=f"sqlite:///{args.sql_db_path}",
                    request_limits=(args.requests_per_day, args.requests_per_hour, args.requests_per_minute)
                 )
-arguments = None
-if "pytest" not in sys.argv[0]:
+    
+    @classmethod
+    def from_defaults(cls):
+        return cls(
+            cache_dir="cache",
+            cache_timeout=24 * 60 * 60,
+            recreate_db=False,
+            sqlite_path="sqlite:///database.db",
+            request_limits=(28800, 1200, 20)
+        )
+
+def parse_arguments():
     _parser = argparse.ArgumentParser("api.py")
     _parser.add_argument(
         "--recreate-db",
@@ -84,4 +94,4 @@ if "pytest" not in sys.argv[0]:
         help="The time it takes for cache elements to get removed. Default is 24 hours."
     )
 
-    arguments = ApiArguments.from_cli_args(_parser.parse_args())
+    return ApiArguments.from_cli_args(_parser.parse_args())

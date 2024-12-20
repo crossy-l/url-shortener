@@ -15,7 +15,6 @@ class UserModel(Base):
         'id': fields.String,
         'name': fields.String,
         # 'password': fields.String, Should not be served
-        # 'salt': fields.String
     }
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -35,4 +34,4 @@ class UserModel(Base):
         return cls.__user_fields
 
     def __repr__(self): 
-        return f"User(name={self.name}, password={self.password}, salt={self.salt})"
+        return f"User(name={self.name}, password={self.password})"

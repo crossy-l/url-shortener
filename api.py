@@ -2,7 +2,7 @@ from flask import Flask
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_restful import Api
-from app.utils.args import ApiArguments, arguments
+from app.utils.args import ApiArguments, parse_arguments
 from app.database.database import ApiDatabase
 from app.factory import create_users_resource, create_user_resource, create_users, create_url_resource, create_urls_resource, create_home_resource
 
@@ -37,6 +37,8 @@ class ApiApp:
     def run(self):
         self.app.run()
 
+gunicorn_app = ApiApp(__name__, ApiArguments.from_defaults()).app
+
 if __name__ == "__main__":
-    app = ApiApp(__name__, arguments)
+    app = ApiApp(__name__, parse_arguments())
     app.run()

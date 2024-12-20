@@ -47,8 +47,8 @@ class SQLiteUserDAL(UserDAL):
         if is_weak_password(password):
             raise PasswordToWeakError()
 
-        password, salt = PasswordManager.hash_password(password)
-        new_user = UserModel(name=name, password=password, salt=salt)
+        password, _ = PasswordManager.hash_password(password)
+        new_user = UserModel(name=name, password=password)
 
         self.session.add(new_user)
         self.session.commit()
